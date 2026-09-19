@@ -192,7 +192,13 @@ export type Milestone = {
  */
 export function calendar(programs: Program[], exams: UnionExam[], chosen?: TestDates, alternatives = false): Milestone[] {
   const list: Milestone[] = [];
-  for (const { exam } of exams) {
+  // ЕНТ is the student's own plan whenever something is saved — as in «Подготовке» and the Quack pace —
+  // so its dates are here even when no saved program asks for it
+  const inPlan = [
+    ...exams.map((u) => u.exam),
+    ...(programs.length && !exams.some((u) => u.exam.id === "ent") ? [EXAMS.ent] : []),
+  ];
+  for (const exam of inPlan) {
     const planned = plannedTest(exam.id, chosen);
     if (!planned) continue;
     const dated = exam.id === "ielts" ? null : exam.id;

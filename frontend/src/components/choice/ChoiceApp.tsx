@@ -733,11 +733,11 @@ export function ChoiceApp({ onRestart }: { onRestart: () => void }) {
               morph(() => {
                 setMode("prep");
                 if (!diagDone) {
+                  // «Требования» are open before the entrance test: the test date is picked there
+                  const open = tab === "overview" && (!sub || sub === "now" || sub === "requirements");
                   setPrepTab("overview");
-                  setPrepSub("now");
-                  if (tab !== "overview" || (sub && sub !== "now")) {
-                    setLaunchDiag(true);
-                  }
+                  setPrepSub(open && sub ? sub : "now");
+                  if (!open) setLaunchDiag(true);
                 } else {
                   setPrepTab(tab);
                   if (sub) setPrepSub(sub);

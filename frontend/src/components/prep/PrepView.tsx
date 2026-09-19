@@ -88,16 +88,17 @@ export function PrepView({
 
   const isDiagPending = !model.diagnosticDone;
 
-  // Без входного замера доступна исключительно вкладка «Сейчас»
+  // Без входного замера открыты «Сейчас» и «Требования»: цели и дату теста можно выбрать до замера
+  const openBeforeTest = (s: PrepSub) => s === "now" || s === "requirements";
   useEffect(() => {
     if (isDiagPending) {
       if (tab !== "overview") onTab("overview");
-      if (sub !== "now") onSub("now");
+      if (!openBeforeTest(sub)) onSub("now");
     }
   }, [isDiagPending, tab, sub, onTab, onSub]);
 
   // A sub-tab belongs to its tab; switching tabs falls back to the first one
-  const current = isDiagPending ? "now" : subFor(tab, sub);
+  const current = isDiagPending ? (openBeforeTest(sub) ? sub : "now") : subFor(tab, sub);
 
   useEffect(() => {
     onDiagnosticStatusChange?.(Boolean(model.diagnosticDone));
